@@ -7,6 +7,7 @@
 <h2>Index</h2>
 
 <p>
+    @Url.Action("Create")
     @Html.ActionLink("Create New", "Create")
 </p>
 <table class="table">
@@ -32,7 +33,8 @@
             @Html.DisplayFor(modelItem => item.ProductName)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.Price)
+            @*@Html.DisplayFor(modelItem => item.Price)*@
+            @string.Format("{0:N0}", item.Price)
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.Active)

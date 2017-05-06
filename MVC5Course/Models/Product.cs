@@ -11,11 +11,7 @@ namespace MVC5Course.Models
 {
     using System;
     using System.Collections.Generic;
-
-    using System.ComponentModel.DataAnnotations;
-    using System.ComponentModel;
-
-
+    
     public partial class Product
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
@@ -25,22 +21,9 @@ namespace MVC5Course.Models
         }
     
         public int ProductId { get; set; }
-
-        [DisplayName("產品")]
-        [Required(ErrorMessage = "請輸入產品")]
-        [MinLength(3),MaxLength(30,ErrorMessage ="長度為3到30個字")]
         public string ProductName { get; set; }
-
-        [DisplayName("價格")]
-        [Required]
-        [Range(0,9999,ErrorMessage ="請輸入0到9999")]
-        //[Required(ErrorMessage = "請輸入價格")]
         public Nullable<decimal> Price { get; set; }
-
         public Nullable<bool> Active { get; set; }
-
-        [DisplayName("庫存")]
-        //[Required(ErrorMessage = "請輸入產品庫存")]
         public Nullable<decimal> Stock { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
