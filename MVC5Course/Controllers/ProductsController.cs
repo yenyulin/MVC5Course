@@ -35,9 +35,29 @@ namespace MVC5Course.Controllers
                     Price = p.Price,
                     Stock = p.Stock
                         })
-                    .Take(10);
+                     .OrderByDescending(p => p.ProductId).Take(10);
 
             return View(data);
+        }
+
+        public ActionResult CreateProduct()
+        {
+            return View();
+        }
+
+
+        [HttpPost]
+        public ActionResult CreateProduct(ProductLiteVM data)
+        {
+            if (ModelState.IsValid)
+            {
+                //儲存資料進資料庫
+                //db.Product.Add(product);
+                //db.SaveChanges();
+                return RedirectToAction("ListProducts");
+            }
+            //驗證失敗 進入原本表單
+            return View();
         }
 
         // GET: Products/Details/5
@@ -70,6 +90,7 @@ namespace MVC5Course.Controllers
         {
             if (ModelState.IsValid)
             {
+                
                 db.Product.Add(product);
                 db.SaveChanges();
                 return RedirectToAction("Index");
