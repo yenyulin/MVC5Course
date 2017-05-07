@@ -123,6 +123,14 @@ namespace MVC5Course.Controllers
             return RedirectToAction("Index");
         }
 
+        public ActionResult Details(int id)
+        {
+            System.Text.StringBuilder sb = new System.Text.StringBuilder();
+
+            var data = db.Database.SqlQuery<Product>("select * from dbo.Product WHERE ProductID=@p3 ",id,"","","1124").FirstOrDefault();
+
+            return View(data);
+        }
 
     }
 }

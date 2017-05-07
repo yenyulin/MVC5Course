@@ -4,11 +4,13 @@ namespace MVC5Course.Models
     using System.Collections.Generic;
     using System.ComponentModel;
     using System.ComponentModel.DataAnnotations;
+  
 
     using System.Linq;
+    using ValidationAttributes;
 
     [MetadataType(typeof(ProductMetaData))]
-    public partial class Product
+    public partial class Product: IValidatableObject
     {
         public int 產品數量 {
             get
@@ -25,7 +27,26 @@ namespace MVC5Course.Models
         }
 
 
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            if (this.Price > 100 && this.Stock > 5)
+            {
+                yield return new ValidationResult("價格與庫存數量不合理",
+                    new string[] { "Price", "Stock" });
+            }
+
+            if (this.OrderLine.Count() > 2 && this.Stock == 0)
+            {
+                yield return new ValidationResult("Stock 與訂單數量不匹配",
+                    new string[] { "Stock" });
+            }
+
+            yield break;
+        }
+        
     }
+
+  
     
     public partial class ProductMetaData
     {
@@ -34,6 +55,7 @@ namespace MVC5Course.Models
         
         [DisplayName("產品名")]
         [StringLength(80, ErrorMessage="欄位長度不得大於 80 個字元")]
+        [商品名稱必須包含Will字串(ErrorMessage ="名字必須包含Will")]
         public string ProductName { get; set; }
 
         [DisplayName("價格")]
