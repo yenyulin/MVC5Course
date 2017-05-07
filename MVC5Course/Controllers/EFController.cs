@@ -5,6 +5,7 @@ using System.Web;
 using System.Web.Mvc;
 using MVC5Course.Models;
 using System.Net;
+using System.Data.Entity.Validation;
 
 namespace MVC5Course.Controllers
 {
@@ -82,8 +83,41 @@ namespace MVC5Course.Controllers
         //[ValidateAntiForgeryToken]
         public ActionResult Delete(int id)
         {
+
             Product product = db.Product.Find(id);
-            db.Product.Remove(product);
+
+            //注意這裡的寫法 
+            //foreach (var item in product.OrderLine.ToList())
+            //{
+            //    db.OrderLine.Remove(item);          
+            //}
+            ////跟上方效果一樣
+            ////db.OrderLine.RemoveRange(product.OrderLine);
+            //db.Product.Remove(product);
+
+            product.IsDeleted = true;
+            
+            try
+             {
+                    db.SaveChanges();
+             }
+             catch (DbEntityValidationException ex)
+             {
+                 throw ex;
+             }
+
+         
+
+            return RedirectToAction("Index");
+        }
+
+
+        public ActionResult Revert(int id)
+        {
+
+            Product product = db.Product.Find(id);
+            
+            product.IsDeleted = false;
             db.SaveChanges();
 
             return RedirectToAction("Index");
