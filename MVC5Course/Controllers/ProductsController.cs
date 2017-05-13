@@ -14,15 +14,22 @@ namespace MVC5Course.Controllers
     public class ProductsController : Controller
     {
         private FabricsEntities db = new FabricsEntities();
-
+        ProductRepository repo = RepositoryHelper.GetProductRepository();
         // GET: Products
         public ActionResult Index(bool Active =true)
         {
-            var dt = db.Product.
-                Where(p=>p.Active.HasValue && p.Active.Value== Active)
+            //Repository 的用法
+            var dt =repo.All()
+                  .Where(p => p.Active.HasValue && p.Active.Value == Active)
                 .OrderByDescending(p => p.ProductId).Take(10);
-            //return View(db.Product.Take(10));
             return View(dt);
+
+
+            //var dt = db.Product.
+            //    Where(p=>p.Active.HasValue && p.Active.Value== Active)
+            //    .OrderByDescending(p => p.ProductId).Take(10);
+            ////return View(db.Product.Take(10));
+            //return View(dt);
         }
 
         public ActionResult ListProducts()
@@ -67,7 +74,10 @@ namespace MVC5Course.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Product product = db.Product.Find(id);
+
+            //Repository的寫法 自已加一個
+            Product product = repo.GetByID(id.Value);
+            //Product product = db.Product.Find(id);
             if (product == null)
             {
                 return HttpNotFound();
