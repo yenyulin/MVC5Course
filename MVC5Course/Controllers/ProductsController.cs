@@ -11,12 +11,12 @@ using MVC5Course.Models.ViewModels;
 
 namespace MVC5Course.Controllers
 {
-    public class ProductsController : Controller
+    public class ProductsController : BaseController
     {
         //private FabricsEntities db = new FabricsEntities();
-        ProductRepository repo = RepositoryHelper.GetProductRepository();
+        //ProductRepository repo = RepositoryHelper.GetProductRepository();
         // GET: Products
-        public ActionResult Index(bool Active =true)
+        public ActionResult Index(bool Active =false)
         {
             //Repository 的用法
             var dt = repo.GetProductByActive(Active);
@@ -168,6 +168,8 @@ namespace MVC5Course.Controllers
             //db.Product.Remove(product);
             //db.SaveChanges();
             Product product = repo.GetByID(id);
+            //強迫關閉驗證 
+            repo.UnitOfWork.Context.Configuration.ValidateOnSaveEnabled = false;
             repo.Delete(product);
             repo.UnitOfWork.Commit();
             return RedirectToAction("Index");

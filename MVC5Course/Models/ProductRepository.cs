@@ -35,7 +35,7 @@ namespace MVC5Course.Models
             this.UnitOfWork.Context.Entry(product).State = EntityState.Modified;
         }
 
-    public IQueryable<Product> GetProductByActive(bool Active = true, bool showAll = true)
+    public IQueryable<Product> GetProductByActive(bool Active = true, bool showAll = false)
     {
             //以下為老師寫法
             //IQueryable<Product> all = this.All();
@@ -50,7 +50,14 @@ namespace MVC5Course.Models
             return All(showAll: showAll).Where(p => p.Active.HasValue && p.Active.Value == Active)
                 .OrderByDescending(p => p.ProductId).Take(10);
         }
-	}
+
+        public override void Delete(Product entity)
+        {
+           
+            entity.IsDeleted = true;
+            //base.Delete(entity);
+        }
+    }
 
 	public  interface IProductRepository : IRepository<Product>
 	{
