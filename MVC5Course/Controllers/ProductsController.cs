@@ -13,16 +13,23 @@ namespace MVC5Course.Controllers
 {
     public class ProductsController : BaseController
     {
+      
+
         //private FabricsEntities db = new FabricsEntities();
-        //ProductRepository repo = RepositoryHelper.GetProductRepository();
+        //ProductRepository repo = RepositoryHelper.GetProductRepository();ㄟ
         // GET: Products
         public ActionResult Index(bool Active =false)
         {
             //Repository 的用法
             var dt = repo.GetProductByActive(Active);
+            ViewData.Model = dt;
+
+            ViewData["ppp"] = dt;
+            ViewBag.qqq = dt;
+
             return View(dt);
 
-
+            
             //var dt = db.Product.
             //    Where(p=>p.Active.HasValue && p.Active.Value== Active)
             //    .OrderByDescending(p => p.ProductId).Take(10);
@@ -30,20 +37,62 @@ namespace MVC5Course.Controllers
             //return View(dt);
         }
 
-        public ActionResult ListProducts()
-        {
-           var data = repo.GetProductByActive(true)
-             .Select(p => new ProductLiteVM()
-             {
-                 ProductId = p.ProductId,
-                 ProductName = p.ProductName,
-                 Price = p.Price,
-                 Stock = p.Stock
-             })
-              .OrderByDescending(p => p.ProductId).Take(10);
-          
+        //public ActionResult ListProducts(string q,string w)
+        //{
+        //    q=ViewBag.p;
 
-            return View(data);
+
+        //    var data = repo.GetProductByActive(true);
+        //    if (!string.IsNullOrEmpty(q))
+        //    {
+        //        var keyword = q;
+        //        data = data.Where(p => p.ProductName.Contains(keyword));
+        //    }
+        //    if (!string.IsNullOrEmpty(w))
+        //    {
+        //        int  intPrice =Convert.ToInt32(w);
+        //        data = data.Where(p => p.Price<= intPrice);
+        //    }
+
+
+        //    ViewData.Model = data
+        //     .Select(p => new ProductLiteVM()
+        //     {
+        //         ProductId = p.ProductId,
+        //         ProductName = p.ProductName,
+        //         Price = p.Price,
+        //         Stock = p.Stock
+        //     })
+        //      .OrderByDescending(p => p.ProductId).Take(10);
+        //   return View(data);
+        //}
+
+        //public ActionResult ListProducts(string q, int Stock_S = 0, int Stock_E = 9999)
+        public ActionResult ListProducts(ListProductQueryVM searchCondition)
+        {
+            
+            var data = repo.GetProductByActive(true);
+            ViewBag.s = "";
+            //if (!String.IsNullOrEmpty(q))
+            if (ModelState.IsValid)
+            {
+                //data = data.Where(p => p.ProductName.Contains(q
+                data = data.Where(p => p.ProductName.Contains(searchCondition.q));
+            }
+
+            //data = data.Where(p => p.Stock > Stock_S && p.Stock < Stock_E);
+            data = data.Where(p => p.Stock > searchCondition.Stock_S && p.Stock < searchCondition.Stock_E);
+
+            ViewData.Model = data
+                .Select(p => new ProductLiteVM()
+                {
+                    ProductId = p.ProductId,
+                    ProductName = p.ProductName,
+                    Price = p.Price,
+                    Stock = p.Stock
+                });
+
+            return View();
         }
 
         public ActionResult CreateProduct()
@@ -60,6 +109,7 @@ namespace MVC5Course.Controllers
                 //儲存資料進資料庫
                 //db.Product.Add(product);
                 //db.SaveChanges();
+                TempData["CreateProduct_Result"] = "商品新增成功";
                 return RedirectToAction("ListProducts");
             }
             //驗證失敗 進入原本表單

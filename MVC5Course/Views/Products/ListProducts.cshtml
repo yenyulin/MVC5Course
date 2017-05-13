@@ -6,6 +6,21 @@
 
 <h2>ListProducts</h2>
 
+@*@if (TempData["CreateProduct_Result"] != null)
+{
+    < h1 > @TempData["CreateProduct_Result"] </ h1 >
+}*@
+<form method="get" >
+    Keyword
+    @Html.TextBox("q");
+
+    存數量:
+@Html.TextBox("Stock_S", null, new { size = "10", type = "number" }) ~
+@Html.TextBox("Stock_E", null, new { size = "10", type = "number" })
+
+  <button>Go</button>
+</form>
+
 <p>
     @Html.ActionLink("Create New", "Create")
 </p>
