@@ -13,15 +13,13 @@ namespace MVC5Course.Controllers
 {
     public class ProductsController : Controller
     {
-        private FabricsEntities db = new FabricsEntities();
+        //private FabricsEntities db = new FabricsEntities();
         ProductRepository repo = RepositoryHelper.GetProductRepository();
         // GET: Products
         public ActionResult Index(bool Active =true)
         {
             //Repository 的用法
-            var dt =repo.All()
-                  .Where(p => p.Active.HasValue && p.Active.Value == Active)
-                .OrderByDescending(p => p.ProductId).Take(10);
+            var dt = repo.GetProductByActive(Active);
             return View(dt);
 
 
@@ -34,15 +32,16 @@ namespace MVC5Course.Controllers
 
         public ActionResult ListProducts()
         {
-                var data=db.Product.Where(p=>p.Active==true)
-               .Select(p => new ProductLiteVM()
-                 {
-                    ProductId = p.ProductId,
-                    ProductName = p.ProductName,
-                    Price = p.Price,
-                    Stock = p.Stock
-                        })
-                     .OrderByDescending(p => p.ProductId).Take(10);
+           var data = repo.GetProductByActive(true)
+             .Select(p => new ProductLiteVM()
+             {
+                 ProductId = p.ProductId,
+                 ProductName = p.ProductName,
+                 Price = p.Price,
+                 Stock = p.Stock
+             })
+              .OrderByDescending(p => p.ProductId).Take(10);
+          
 
             return View(data);
         }
@@ -100,9 +99,10 @@ namespace MVC5Course.Controllers
         {
             if (ModelState.IsValid)
             {
-                
-                db.Product.Add(product);
-                db.SaveChanges();
+                repo.Add(product);
+                repo.UnitOfWork.Commit();
+                //db.Product.Add(product);
+                //db.SaveChanges();
                 return RedirectToAction("Index");
             }
 
@@ -116,7 +116,8 @@ namespace MVC5Course.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Product product = db.Product.Find(id);
+            Product product = repo.GetByID(id.Value);
+            //Product product = db.Product.Find(id);
             if (product == null)
             {
                 return HttpNotFound();
@@ -133,8 +134,10 @@ namespace MVC5Course.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.Entry(product).State = EntityState.Modified;
-                db.SaveChanges();
+                //db.Entry(product).State = EntityState.Modified;
+                //db.SaveChanges();'
+                repo.Update(product);
+                repo.UnitOfWork.Commit(); 
                 return RedirectToAction("Index");
             }
             return View(product);
@@ -147,7 +150,8 @@ namespace MVC5Course.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Product product = db.Product.Find(id);
+            Product product = repo.GetByID(id.Value);
+            //Product product = db.Product.Find(id);
             if (product == null)
             {
                 return HttpNotFound();
@@ -160,20 +164,23 @@ namespace MVC5Course.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Product product = db.Product.Find(id);
-            db.Product.Remove(product);
-            db.SaveChanges();
+            //Product product = db.Product.Find(id);
+            //db.Product.Remove(product);
+            //db.SaveChanges();
+            Product product = repo.GetByID(id);
+            repo.Delete(product);
+            repo.UnitOfWork.Commit();
             return RedirectToAction("Index");
         }
 
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                db.Dispose();
-            }
-            base.Dispose(disposing);
-        }
+        //protected override void Dispose(bool disposing)
+        //{
+        //    if (disposing)
+        //    {
+        //        db.Dispose();
+        //    }
+        //    base.Dispose(disposing);
+        //}
         
     }
 }
