@@ -1,0 +1,27 @@
+﻿>
+@*@Model int[]*@
+
+@{ 
+    foreach (var item in @Model)
+    {
+        @item
+    }
+}
+
+
+@{
+    foreach (var item in @Model)
+    {
+        @(item+" ");
+
+    }
+}
+
+
+<ul>
+@foreach (var item in @Model)
+{
+    <li>@item</li>
+}
+</ul>
+

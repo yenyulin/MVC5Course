@@ -8,11 +8,12 @@ using System.Web;
 using System.Web.Mvc;
 using MVC5Course.Models;
 using MVC5Course.Models.ViewModels;
-
+using System.Data.Entity.Validation;
 
 
 namespace MVC5Course.Controllers
 {
+    [HandleError(ExceptionType = typeof(DbEntityValidationException), View = "Error_DbEntityValidationException")]
     //abstract 必須得加
     public abstract class BaseController : Controller
     {
