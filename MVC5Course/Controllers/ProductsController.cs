@@ -13,8 +13,9 @@ namespace MVC5Course.Controllers
 {
     public class ProductsController : BaseController
     {
-      
 
+        //這邊是快取的意思
+        [OutputCache(Duration = 5, Location = System.Web.UI.OutputCacheLocation.ServerAndClient)]
         //private FabricsEntities db = new FabricsEntities();
         //ProductRepository repo = RepositoryHelper.GetProductRepository();ㄟ
         // GET: Products
@@ -94,6 +95,8 @@ namespace MVC5Course.Controllers
 
             return View();
         }
+
+   
 
         public ActionResult CreateProduct()
         {
@@ -178,19 +181,38 @@ namespace MVC5Course.Controllers
         // POST: Products/Edit/5
         // 若要免於過量張貼攻擊，請啟用想要繫結的特定屬性，如需
         // 詳細資訊，請參閱 http://go.microsoft.com/fwlink/?LinkId=317598。
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public ActionResult Edit([Bind(Include = "ProductId,ProductName,Price,Active,Stock")] Product product)
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //        //db.Entry(product).State = EntityState.Modified;
+        //        //db.SaveChanges();'
+        //        repo.Update(product);
+        //        repo.UnitOfWork.Commit(); 
+        //        return RedirectToAction("Index");
+        //    }
+        //    return View(product);
+        //}
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "ProductId,ProductName,Price,Active,Stock")] Product product)
+        public ActionResult Edit(int id, FormCollection form)
         {
-            if (ModelState.IsValid)
+            //這邊這種寫法 如果是原本的 只要沒有bind其中一個 會變回預設值
+            
+            var product = repo.GetByID(id);
+            //if (TryUpdateModel (product))
+                //如這樣寫就是只bind這幾個
+            if (TryUpdateModel(product, new string[] { "ProductId", "ProductName", "Price", "Active", "Stock" })) 
             {
-                //db.Entry(product).State = EntityState.Modified;
-                //db.SaveChanges();'
-                repo.Update(product);
-                repo.UnitOfWork.Commit(); 
+               
+                    repo.UnitOfWork.Commit();
                 return RedirectToAction("Index");
             }
             return View(product);
+            
         }
 
         // GET: Products/Delete/5

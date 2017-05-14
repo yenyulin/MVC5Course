@@ -28,6 +28,7 @@ namespace MVC5Course.Controllers
         //    base.HandleUnknownAction(actionName);
         //}
 
+        //[LocatOnly]
         public ActionResult Debug()
         {
             return Content("oops");

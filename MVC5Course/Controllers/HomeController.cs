@@ -14,6 +14,16 @@ namespace MVC5Course.Controllers
             return View();
         }
 
+        [ShareViewBag]
+        public ActionResult About()
+        {
+            //ViewBag.Message = "Your application description page.";
+
+            throw new ArgumentException("Error Handled!!");
+
+            return View();
+        }
+        [ShareViewBag(MyProperty = "")]
         public ActionResult PartialAbout()
         {
             //如果是ajax的request
@@ -60,13 +70,7 @@ namespace MVC5Course.Controllers
             return View();
         }
 
-        public ActionResult About()
-        {
-            ViewBag.Message = "Your application description page.";
-
-            return View();
-        }
-
+     
         public ActionResult Contact()
         {
             ViewBag.Message = "Your contact page.";
