@@ -14,9 +14,39 @@ namespace MVC5Course.Controllers
     {
         private FabricsEntities db = new FabricsEntities();
 
+        public ActionResult Index(int CreditRatingFilter=-1,string LastNameFilter="")
+        {
+            var ratings = (from p in db.Client
+                                select p.CreditRating)
+                           .Distinct()
+                           .OrderBy(p => p).ToList();
 
-    // GET: Clients
-    public ActionResult BathUpdate()
+            ViewBag.CreditRatingFilter = new SelectList(ratings);
+
+            var lastNames = (from p in db.Client
+                             select p.LastName)
+                           .Distinct()
+                           .OrderBy(p => p).ToList();
+
+            ViewBag.LastNameFilter = new SelectList(lastNames);
+
+            var client = db.Client.AsQueryable();
+
+
+            if (CreditRatingFilter >= 0)
+            {
+                client = client.Where(p => p.CreditRating == CreditRatingFilter);
+            }
+            if (!String.IsNullOrEmpty(LastNameFilter))
+            {
+                client = client.Where(p => p.LastName == LastNameFilter);
+            }
+
+            return View(client.Take(10));
+        }
+
+        // GET: Clients
+        public ActionResult BathUpdate()
         {
             GetClients();
             return View();
@@ -26,7 +56,6 @@ namespace MVC5Course.Controllers
         {
             var client = db.Client.Include(c => c.Occupation).Take(10);
             ViewData.Model = client;
-          
         }
 
        
@@ -51,6 +80,97 @@ namespace MVC5Course.Controllers
             GetClients();
 
             return View();
+        }
+
+        public ActionResult Edit(int id)
+        {
+            Client client = db.Client.Find(id);
+
+            List<SelectListItem> listItem = new List<SelectListItem>();
+            for (double i = 0; i <= 9; i++)
+            {
+                listItem.Add(new SelectListItem { Text = i.ToString(), Value = i.ToString() });
+            }
+            
+
+            // ViewData["Rat"] = new SelectList(listItem, "Value", "Text", "");
+
+            var items = new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+            ViewBag.CreditRating = new SelectList(items);
+
+            //ViewData.Model = db.Client.Find(id);
+            return View(client);
+            
+        }
+
+
+
+        [HttpPost]
+        public ActionResult Edit(int id, FormCollection from)
+        {
+            var Client = db.Client.Find(id);
+            //var items = new int[0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+
+            //ViewBag.CreditRating = new SelectList(items);
+
+   
+            //ViewBag.Rating= new SelectList(listItem, "Value", "Text", "");
+
+
+
+            if (TryUpdateModel(Client,
+              includeProperties: new string[] { "CreditRating" }))
+            {
+                db.SaveChanges();
+                return RedirectToAction("Index");
+            }
+
+            return View();
+        }
+
+      
+     
+        
+
+
+        public ActionResult Details(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            Client client = db.Client.Find(id);
+            if (client == null)
+            {
+                return HttpNotFound();
+            }
+            return View(client);
+        }
+
+
+        public ActionResult Delete(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            Order order = db.Order.Find(id);
+            if (order == null)
+            {
+                return HttpNotFound();
+            }
+            return View(order);
+        }
+
+        // POST: Orders/Delete/5
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public ActionResult DeleteConfirmed(int id)
+        {
+            Order order = db.Order.Find(id);
+            db.Order.Remove(order);
+            db.SaveChanges();
+            return RedirectToAction("Index");
         }
 
     }

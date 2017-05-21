@@ -1,5 +1,14 @@
-﻿>
+﻿
 @*@Model int[]*@
+@{
+    foreach (var item in @Model)
+    {
+        @item
+    }
+}
+
+
+
 
 @{ 
     foreach (var item in @Model)

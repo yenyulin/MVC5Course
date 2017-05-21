@@ -1,0 +1,32 @@
+﻿@model MVC5Course.Models.Client
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Details</title>
+</head>
+<body>
+    <div>
+        <h4>Client</h4>
+        <hr />
+        @Html.DisplayForModel()
+
+        
+    </div>
+
+   @Html.Action("MinIndex", "Orders", new { ClientId = Model.ClientId })
+   
+   @*@Html.Partial("../Orders/MinIndex", Model.Order)*@
+
+    <p>
+        @Html.ActionLink("Edit", "Edit", new { id = Model.Order }) |
+        @Html.ActionLink("Back to List", "Index")
+    </p>
+</body>
+</html>

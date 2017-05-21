@@ -28,7 +28,7 @@
             <th>
                 @Html.DisplayNameFor(model => model.CreditRating)
             </th>
-
+            <th></th>
         </tr>
         @{
             var items = Model.ToArray();
@@ -59,7 +59,11 @@
                 <td>
                     @Html.DisplayFor(modelItem => items[i].CreditRating)
                 </td>
-
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { id = items[i].ClientId }) |
+                    @Html.ActionLink("Details", "Details", new { id = items[i].ClientId }) |
+                    @Html.ActionLink("Delete", "Delete", new { id = items[i].ClientId })
+                </td>
             </tr>
         }
     </table>

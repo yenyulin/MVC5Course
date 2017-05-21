@@ -78,6 +78,8 @@ namespace MVC5Course.Models
         public bool IsDeleted { get; set; }
 
         [DisplayName("時間")]
+        //[DataType(DataType.Date)]
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public System.DateTime CreateDate { get; set; }
 
         public virtual ICollection<OrderLine> OrderLine { get; set; }
