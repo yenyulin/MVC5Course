@@ -1,4 +1,6 @@
 ﻿@model IEnumerable<MVC5Course.Models.Client>
+@using PagedList
+@using PagedList.Mvc
 
 @{
     ViewBag.Title = "Index";
@@ -69,3 +71,16 @@
 }
 
 </table>
+
+@*    <div style="text-align:center">
+        @Html.PagedListPager(Model, page => Url.Action("Index", new { page }))
+    </div>*@
+
+@Html.PagedListPager(Model as IPagedList , (p) => Url.Action("Index", new {
+    intPageNo = p,
+    CreditRatingFilter =Html.Value("CreditRatingFilter"),
+    LastNameFilter = Html.Value("LastNameFilter") }))
+
+
+
+
